@@ -1,9 +1,6 @@
 package main;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Graphs {
     private static class Node {
@@ -73,12 +70,73 @@ public class Graphs {
             // Do something with the current node
 
             for (int next : node.children) {
+                // Do something with the current (parent) node and next (child) node
+
                 if (!visited[next]) {
                     visited[next] = true;
                     toVisit.add(next);
-                    // Do something with the current (parent) node and next (child) node
                 }
             }
         }
+    }
+
+    // Dijkstra's algorithm for finding the shortest path in graph
+
+    private static class Edge {
+        private int length;
+
+        Edge(int length) {
+            this.length = length;
+        }
+    }
+
+    private static class GraphNode {
+        private List<Map.Entry<Integer, Edge>> children;
+        private int parent;
+
+        public GraphNode() {
+            this.parent = -1;
+            this.children = new ArrayList<>();
+        }
+
+        public void addChild(int child, int length) {
+            this.children.add(new AbstractMap.SimpleEntry<>(child, new Edge(length)));
+        }
+    }
+
+    // Finds the shortest path from `from` node to `to` node, using dijkstra's algorithm.
+    private static int dijkstra(GraphNode[] nodes, int from, int to) {
+        boolean[] visited = new boolean[nodes.length];
+        Queue<Integer> toVisit = new ArrayDeque<>();
+        int[] distances = new int[nodes.length];
+
+        Arrays.fill(distances, Integer.MAX_VALUE / 2);
+        distances[from] = 0;
+
+        visited[from] = true;
+        toVisit.add(from);
+
+        while (!toVisit.isEmpty()) {
+            int current = toVisit.poll();
+            if (visited[current]) continue;
+
+            GraphNode node = nodes[current];
+
+            // Do something with the current node
+
+            for (Map.Entry<Integer, Edge> edge : node.children) {
+                int nextDistance = distances[current] + edge.getValue().length;
+                int next = edge.getKey();
+                distances[next] = Math.min(distances[next], nextDistance);
+
+                toVisit.add(next);
+            }
+
+            visited[current] = true;
+            if (current == to) {
+                return distances[to];
+            }
+        }
+        return -1;
     }
 }
