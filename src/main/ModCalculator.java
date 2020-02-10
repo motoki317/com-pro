@@ -24,21 +24,34 @@ class ModCalculator {
         inverseFactorial.add(1L);
     }
 
-    private void populate(long n) {
+    /**
+     * Quickly populate factorial and inverse factorial up to n
+     */
+    private void populate(int n) {
         // i == next index
-        for (int i = factorial.size(); i <= n; i++) {
+        int start = factorial.size();
+        for (int i = start; i <= n; i++) {
             factorial.add(
                     multiply(factorial.get(i - 1), i)
             );
-            inverseFactorial.add(
-                    multiply(inverseFactorial.get(i - 1), inverse(i))
-            );
+            // temporarily add
+            inverseFactorial.add(0L);
+        }
+        // avoid inverse calculation by filling inverseFactorial in the inverse direction
+        inverseFactorial.set(n, inverse(factorial.get(n)));
+        for (int i = n; i > start; i--) {
+            inverseFactorial.set(i - 1, multiply(inverseFactorial.get(i), i));
         }
     }
 
     // a + b (mod m)
     long add(long a, long b) {
         return (a + b) % mod;
+    }
+
+    // a - b (mod m)
+    long subtract(long a, long b) {
+        return add(add(a, -b), mod);
     }
 
     // a * b (mod m)
@@ -68,6 +81,14 @@ class ModCalculator {
     long factorial(int n) {
         populate(n);
         return factorial.get(n);
+    }
+
+    /**
+     * Calculates inverse factorial value in mod.
+     */
+    long inverseFactorial(int n) {
+        populate(n);
+        return inverseFactorial.get(n);
     }
 
     /**
