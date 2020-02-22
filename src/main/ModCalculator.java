@@ -106,6 +106,15 @@ class ModCalculator {
     }
 
     /**
+     * Calculates multi-choose, or combination with repetition in mod.
+     * <br>a.k.a
+     * <br>nHr
+     */
+    long multiChoose(int n, int r) {
+        return combination(n + r - 1, r);
+    }
+
+    /**
      * Calculates permutation value in mod.
      * <br>a.k.a
      * <br>aPb
