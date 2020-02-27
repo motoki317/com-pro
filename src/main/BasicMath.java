@@ -14,4 +14,24 @@ class BasicMath {
         }
         return ret;
     }
+
+    static long gcd(long... a) {
+        if (a.length == 0) return 1;
+        long ret = a[0];
+        for (int i = 1; i < a.length; i++) {
+            ret = gcd(ret, a[i]);
+        }
+        return ret;
+    }
+
+    static long gcd(long a, long b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+
+    static long lcm(long a, long b) {
+        return a * b / gcd(a, b);
+    }
 }
