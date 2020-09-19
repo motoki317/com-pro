@@ -3,8 +3,8 @@ import java.util.*;
 
 public class Main {
 
-    private static FastReader in = new FastReader(System.in);
-    private static PrintWriter out = new PrintWriter(System.out);
+    private static final FastReader in = new FastReader(System.in);
+    private static final PrintWriter out = new PrintWriter(System.out);
 
     private static final long MOD = (long) 1e9 + 7;
 
