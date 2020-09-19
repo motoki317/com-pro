@@ -30,6 +30,8 @@ class ModCalculator {
     private void populate(int n) {
         // i == next index
         int start = factorial.size();
+        if (n <= start) return;
+
         for (int i = start; i <= n; i++) {
             factorial.add(
                     multiply(factorial.get(i - 1), i)
