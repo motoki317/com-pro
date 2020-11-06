@@ -1,15 +1,24 @@
 package main;
 
+import com.sun.istack.internal.Nullable;
+
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Graphs {
-    private static class Node {
-        private List<Integer> children;
+    public static class Node {
+        private final List<Integer> children;
         private int parent;
 
         public Node() {
             this.parent = -1;
             this.children = new ArrayList<>();
+        }
+
+        public Node(int parent, List<Integer> children) {
+            this.parent = parent;
+            this.children = children;
         }
 
         public void addChild(int child) {
@@ -80,10 +89,73 @@ public class Graphs {
         }
     }
 
+    /**
+     * Checks if the given graph is DAG (Directed Acyclic Graph).
+     * @param nodes List of nodes
+     * @return true if the graph is DAG.
+     */
+    public static boolean isDAG(Node[] nodes) {
+        return topologicalSort(nodes) != null;
+    }
+
+    /**
+     * Topologically sort the graph according to Kahn's algorithm.
+     * https://en.wikipedia.org/wiki/Topological_sorting
+     * @param nodesArray array of all nodes
+     * @return Non-null topologically ordered indices; returns null if the graph is *not* DAG.
+     */
+    @Nullable
+    public static List<Integer> topologicalSort(Node[] nodesArray) {
+        class INode {
+            private final int i;
+            private final Set<Integer> parents;
+            private final Set<Integer> children;
+
+            private INode(int i, Set<Integer> children) {
+                this.i = i;
+                this.parents = new HashSet<>();
+                this.children = children;
+            }
+        }
+
+        List<INode> nodes = IntStream.range(0, nodesArray.length)
+                .mapToObj(i -> new INode(i, new HashSet<>(nodesArray[i].children)))
+                .collect(Collectors.toList());
+        // add parents info
+        nodes.forEach(n -> n.children.forEach(child -> nodes.get(child).parents.add(n.i)));
+
+        // Empty list that will contain the sorted elements
+        List<Integer> ordering = new ArrayList<>();
+        // Set of all nodes with no incoming edge
+        Queue<INode> next = nodes.stream().filter(n -> n.parents.isEmpty())
+                .collect(Collectors.toCollection(ArrayDeque::new));
+
+        while (!next.isEmpty()) {
+            INode n = next.poll();
+            ordering.add(n.i);
+
+            for (int child : n.children) {
+                INode m = nodes.get(child);
+                m.parents.remove(n.i);
+                if (m.parents.isEmpty()) {
+                    next.add(m);
+                }
+            }
+            n.children.clear();
+        }
+
+        if (nodes.stream().map(n -> n.parents.isEmpty() && n.children.isEmpty())
+                .reduce(true, (acc, elt) -> acc && elt)) {
+            return ordering;
+        } else {
+            return null;
+        }
+    }
+
     // Dijkstra's algorithm for finding the shortest path in graph
 
     private static class Edge {
-        private int length;
+        private final int length;
 
         Edge(int length) {
             this.length = length;
@@ -91,7 +163,7 @@ public class Graphs {
     }
 
     private static class GraphNode {
-        private List<Map.Entry<Integer, Edge>> children;
+        private final List<Map.Entry<Integer, Edge>> children;
         private int parent;
 
         public GraphNode() {
