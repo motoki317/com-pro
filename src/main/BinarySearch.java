@@ -9,7 +9,7 @@ class BinarySearch {
      * that is, the first element that does not satisfy p or last if all elements satisfy p.
      * <br>Doc copied from c++ ref for std::partition_point
      * <br>https://en.cppreference.com/w/cpp/algorithm/partition_point
-     * @param predicate unary predicate which returns ​true for the elements found in the beginning of the range.
+     * @param predicate unary predicate which returns true for the elements found in the beginning of the range.
      * @param first the partitioned range of elements to examine
      * @param last the partitioned range of elements to examine
      * @return The iterator past the end of the first partition within [first, last) or last if all elements satisfy p.
