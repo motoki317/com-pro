@@ -240,17 +240,15 @@ public class Graphs {
     private static class Edge {
         private final int length;
 
-        Edge(int length) {
+        public Edge(int length) {
             this.length = length;
         }
     }
 
     private static class GraphNode {
         private final List<Map.Entry<Integer, Edge>> children;
-        private int parent;
 
         public GraphNode() {
-            this.parent = -1;
             this.children = new ArrayList<>();
         }
 
@@ -259,40 +257,29 @@ public class Graphs {
         }
     }
 
-    // Finds the shortest path from `from` node to `to` node, using dijkstra's algorithm.
-    private static int dijkstra(GraphNode[] nodes, int from, int to) {
-        boolean[] visited = new boolean[nodes.length];
-        Queue<Integer> toVisit = new ArrayDeque<>();
+    // Finds the shortest path from `from` node to all nodes, using dijkstra's algorithm.
+    private static int[] dijkstra(GraphNode[] nodes, int from) {
         int[] distances = new int[nodes.length];
-
         Arrays.fill(distances, Integer.MAX_VALUE / 2);
         distances[from] = 0;
 
-        visited[from] = true;
+        boolean[] visited = new boolean[nodes.length];
+        Queue<Integer> toVisit = new ArrayDeque<>();
         toVisit.add(from);
-
         while (!toVisit.isEmpty()) {
             int current = toVisit.poll();
             if (visited[current]) continue;
+            visited[current] = true;
 
             GraphNode node = nodes[current];
-
-            // Do something with the current node
-
             for (Map.Entry<Integer, Edge> edge : node.children) {
                 int nextDistance = distances[current] + edge.getValue().length;
                 int next = edge.getKey();
                 distances[next] = Math.min(distances[next], nextDistance);
-
                 toVisit.add(next);
             }
-
-            visited[current] = true;
-            if (current == to) {
-                return distances[to];
-            }
         }
-        return -1;
+        return distances;
     }
 
     /**
